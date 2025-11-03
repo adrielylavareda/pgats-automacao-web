@@ -15,14 +15,11 @@ export default defineConfig({
     // Reporter Mochawesome
     reporter: 'mochawesome',
     reporterOptions: {
-      reportDir: 'cypress/reports',
+      reportDir: 'cypress/reports',  // pasta de saída dos JSON
       overwrite: false,
-      html: true,
-      json: true,
-      timestamp: 'mmddyyyy_HHMMss',
-      charts: true,
-      reportTitle: 'E2E Test Report',
-      inlineAssets: true
+      html: false,    // não gerar HTML por spec
+      json: true,     // necessário para merge
+      timestamp: 'mmddyyyy_HHMMss'
     },
   },
 })
