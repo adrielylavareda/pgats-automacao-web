@@ -16,8 +16,24 @@ jobs:
       - name: Instalando dependências
         run: npm install
 
-      - name: Executando os testes
+      - name: Executando testes Cypress
         run: npx cypress run --browser chrome --headless
+
+      - name: Gerar relatório consolidado Mochawesome
+        run: |
+          mkdir -p cypress/reports/final
+          echo "🔄 Unindo relatórios Mochawesome..."
+          if compgen -G "cypress/reports/*.json" > /dev/null; then
+            npx mochawesome-merge cypress/reports/*.json > cypress/reports/final/report.json
+            if [ -s cypress/reports/final/report.json ]; then
+              npx marge cypress/reports/final/report.json -f final-report -o cypress/reports/final
+              echo "✅ Relatório consolidado gerado em cypress/reports/final/final-report.html"
+            else
+              echo "⚠️ Nenhum conteúdo válido encontrado nos JSONs. Relatório final não gerado."
+            fi
+          else
+            echo "⚠️ Nenhum arquivo JSON encontrado. Verifique se os testes foram executados."
+          fi
 
       - name: Organizar vídeos por spec
         run: |
@@ -27,23 +43,6 @@ jobs:
             mkdir -p "cypress/videos/organized/$specName"
             mv "$video" "cypress/videos/organized/$specName/"
           done
-
-      - name: Gerar relatório consolidado Mochawesome
-        run: |
-          mkdir -p cypress/reports
-          # Verifica se existem JSONs
-          if compgen -G "cypress/reports/*.json" > /dev/null; then
-            echo "Arquivos JSON encontrados. Gerando relatório consolidado..."
-            npx mochawesome-merge cypress/reports/*.json > cypress/reports/report.json
-            if [ -s cypress/reports/report.json ]; then
-              npx marge cypress/reports/report.json -f final-report -o cypress/reports
-              echo "Relatório consolidado gerado em cypress/reports/final-report.html"
-            else
-              echo "report.json vazio. Certifique-se de que os testes estão gerando JSON corretamente."
-            fi
-          else
-            echo "Nenhum arquivo JSON encontrado. Pulando merge do Mochawesome."
-          fi
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
