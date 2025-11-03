@@ -86,7 +86,7 @@ Os relatórios de execução são gerados automaticamente e podem ser encontrado
 
 ## 📝 Notas Adicionais
 
-- Os testes são executados em um ambiente Linux através do GitHub Actions
+- Os testes são executados através do GitHub Actions
 - Screenshots e vídeos são gerados automaticamente para análise de falhas
 - Relatórios detalhados são disponibilizados após cada execução
 
