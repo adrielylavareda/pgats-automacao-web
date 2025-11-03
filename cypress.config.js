@@ -1,24 +1,31 @@
+const { defineConfig } = require("cypress");
+
+module.exports = defineConfig({
+  e2e: {
+    setupNodeEvents(on, config) {
+      // implement node event listeners here
+    },
+  },
+});
+
 import { defineConfig } from 'cypress'
 
 export default defineConfig({
   e2e: {
     supportFile: 'cypress/support/e2e.js',
 
-    // Screenshots
     screenshotOnRunFailure: true,
     screenshotsFolder: 'cypress/screenshots',
 
-    // Vídeos
     video: true,
     videosFolder: 'cypress/videos',
 
-    // Reporter Mochawesome
     reporter: 'mochawesome',
     reporterOptions: {
-      reportDir: 'cypress/reports',  // pasta de saída dos JSON
+      reportDir: 'cypress/reports',  // pasta para JSON
       overwrite: false,
-      html: false,    // não gerar HTML por spec
-      json: true,     // necessário para merge
+      html: false,    // HTML será gerado apenas após merge
+      json: true,     // obrigatório para merge
       timestamp: 'mmddyyyy_HHMMss'
     },
   },
