@@ -20,9 +20,17 @@ jobs:
       - name: Instalando dependências
         run: npm install
 
+      # Executando os testes
       - name: Executando os testes
-        run: npx cypress run
+        run: npx cypress run --browser chrome --headless
 
+      # Gerar relatório Mochawesome consolidado
+      - name: Gerar relatório Mochawesome
+        run: |
+          npx mochawesome-merge cypress/reports/*.json > cypress/reports/report.json
+          npx marge cypress/reports/report.json -f final-report -o cypress/reports
+
+      # Upload dos artefatos (screenshots, vídeos e relatórios)
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
