@@ -10,25 +10,30 @@ jobs:
 
     steps: 
 
-      # clone do projeto para a máquina
+      # clone do projeto
       - uses: actions/checkout@v4
 
-      # Conferir a versão instalada
+      # Conferir a versão do Node
       - name: Node version
         run: node --version
 
+      # Instalar dependências
       - name: Instalando dependências
         run: npm install
 
-      # Executando os testes
+      # Executar testes
       - name: Executando os testes
         run: npx cypress run --browser chrome --headless
 
-      # Gerar relatório Mochawesome consolidado
+      # Gerar relatório Mochawesome apenas se houver arquivos JSON
       - name: Gerar relatório Mochawesome
         run: |
-          npx mochawesome-merge cypress/reports/*.json > cypress/reports/report.json
-          npx marge cypress/reports/report.json -f final-report -o cypress/reports
+          if compgen -G "cypress/reports/*.json" > /dev/null; then
+            npx mochawesome-merge cypress/reports/*.json > cypress/reports/report.json
+            npx marge cypress/reports/report.json -f final-report -o cypress/reports
+          else
+            echo "Nenhum arquivo JSON encontrado. Pulando merge do Mochawesome."
+          fi
 
       # Upload dos artefatos (screenshots, vídeos e relatórios)
       - uses: actions/upload-artifact@v4
