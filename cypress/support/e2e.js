@@ -22,20 +22,18 @@ import './commands'
 // cypress/support/e2e.js
 import './commands'
 
-// Hook global que roda após cada teste
+// Hook global para screenshots
 afterEach(function () {
   // Nome do spec sem extensão
   const specName = Cypress.spec.name.replace(/\.[^/.]+$/, "")
-  
+
   // Nome do teste (removendo caracteres inválidos)
   const testName = this.currentTest.fullTitle().replace(/[:\/]/g, ' - ')
 
-  // Cria subpasta do spec automaticamente
-  const screenshotPath = `${specName}/${testName}`
-
-  // Tira screenshot
-  cy.screenshot(screenshotPath, { capture: 'runner' })
+  // Tira screenshot na subpasta do spec
+  cy.screenshot(`${specName}/${testName}`, { capture: 'runner' })
 })
+
 
 
 // --- Hooks globais para mensagens de sucesso/erro ---
