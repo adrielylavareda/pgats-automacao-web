@@ -1,24 +1,23 @@
-
 import { defineConfig } from 'cypress'
 
 export default defineConfig({
   e2e: {
     supportFile: 'cypress/support/e2e.js',
 
+    // Screenshot & vídeos
     screenshotOnRunFailure: true,
     screenshotsFolder: 'cypress/screenshots',
-
     video: true,
     videosFolder: 'cypress/videos',
 
+    // Reporter Mochawesome
     reporter: 'mochawesome',
     reporterOptions: {
-      reportDir: 'cypress/reports',  // pasta para JSON
+      reportDir: 'cypress/reports',
       overwrite: false,
-      html: false,    // HTML será gerado apenas após merge
-      json: true,     // obrigatório para merge
+      html: true,
+      json: true,
       timestamp: 'mmddyyyy_HHMMss'
     },
   },
 })
-
