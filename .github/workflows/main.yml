@@ -7,7 +7,7 @@ jobs:
   e2e-tests:
     runs-on: ubuntu-latest
 
-    steps: 
+    steps:
       - uses: actions/checkout@v4
 
       - name: Node version
@@ -31,6 +31,7 @@ jobs:
       - name: Gerar relatório consolidado Mochawesome
         run: |
           mkdir -p cypress/reports
+          # Verifica se existem JSONs
           if compgen -G "cypress/reports/*.json" > /dev/null; then
             echo "Arquivos JSON encontrados. Gerando relatório consolidado..."
             npx mochawesome-merge cypress/reports/*.json > cypress/reports/report.json
@@ -38,7 +39,7 @@ jobs:
               npx marge cypress/reports/report.json -f final-report -o cypress/reports
               echo "Relatório consolidado gerado em cypress/reports/final-report.html"
             else
-              echo "report.json vazio ou inválido. Pulando geração do HTML."
+              echo "report.json vazio. Certifique-se de que os testes estão gerando JSON corretamente."
             fi
           else
             echo "Nenhum arquivo JSON encontrado. Pulando merge do Mochawesome."
