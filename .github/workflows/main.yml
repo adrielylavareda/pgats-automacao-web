@@ -8,33 +8,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 🧩 Clona o repositório
       - uses: actions/checkout@v4
 
+      # 🧩 Exibe versão do Node
       - name: Node version
         run: node --version
 
+      # 🧩 Instala dependências
       - name: Instalando dependências
         run: npm install
 
-      - name: Executando testes Cypress
+      # 🧩 Executa os testes E2E
+      - name: Executando os testes
         run: npx cypress run --browser chrome --headless
 
+      # 🧩 Gera o relatório consolidado Mochawesome automaticamente
       - name: Gerar relatório consolidado Mochawesome
         run: |
           mkdir -p cypress/reports/final
           echo "🔄 Unindo relatórios Mochawesome..."
-          if compgen -G "cypress/reports/*.json" > /dev/null; then
-            npx mochawesome-merge cypress/reports/*.json > cypress/reports/final/report.json
-            if [ -s cypress/reports/final/report.json ]; then
-              npx marge cypress/reports/final/report.json -f final-report -o cypress/reports/final
-              echo "✅ Relatório consolidado gerado em cypress/reports/final/final-report.html"
-            else
-              echo "⚠️ Nenhum conteúdo válido encontrado nos JSONs. Relatório final não gerado."
-            fi
+          npm run report:full
+          if [ -f cypress/reports/final/final-report.html ]; then
+            echo "✅ Relatório consolidado gerado em cypress/reports/final/final-report.html"
           else
-            echo "⚠️ Nenhum arquivo JSON encontrado. Verifique se os testes foram executados."
+            echo "⚠️ Nenhum relatório consolidado encontrado. Verifique os testes."
           fi
 
+      # 🧩 Organiza vídeos por spec 
       - name: Organizar vídeos por spec
         run: |
           mkdir -p cypress/videos/organized
@@ -44,6 +45,7 @@ jobs:
             mv "$video" "cypress/videos/organized/$specName/"
           done
 
+      # 🧩 upload dos artefatos
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
