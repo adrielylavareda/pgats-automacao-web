@@ -28,16 +28,15 @@ jobs:
             mv "$video" "cypress/videos/organized/$specName/"
           done
 
-      - name: Gerar relatório Mochawesome
+      - name: Gerar relatório consolidado Mochawesome
         run: |
           mkdir -p cypress/reports
-          JSON_FILES=(cypress/reports/*.json)
           if compgen -G "cypress/reports/*.json" > /dev/null; then
             echo "Arquivos JSON encontrados. Gerando relatório consolidado..."
             npx mochawesome-merge cypress/reports/*.json > cypress/reports/report.json
             if [ -s cypress/reports/report.json ]; then
               npx marge cypress/reports/report.json -f final-report -o cypress/reports
-              echo "Relatório gerado com sucesso!"
+              echo "Relatório consolidado gerado em cypress/reports/final-report.html"
             else
               echo "report.json vazio ou inválido. Pulando geração do HTML."
             fi
