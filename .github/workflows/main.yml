@@ -5,37 +5,46 @@ on:
 
 jobs:
   e2e-tests:
-
     runs-on: ubuntu-latest
 
     steps: 
-
-      # clone do projeto
       - uses: actions/checkout@v4
 
-      # Conferir a versão do Node
       - name: Node version
         run: node --version
 
-      # Instalar dependências
       - name: Instalando dependências
         run: npm install
 
-      # Executar testes
       - name: Executando os testes
         run: npx cypress run --browser chrome --headless
 
-      # Gerar relatório Mochawesome apenas se houver arquivos JSON
+      - name: Organizar vídeos por spec
+        run: |
+          mkdir -p cypress/videos/organized
+          for video in cypress/videos/*.mp4; do
+            specName=$(basename "$video" .mp4)
+            mkdir -p "cypress/videos/organized/$specName"
+            mv "$video" "cypress/videos/organized/$specName/"
+          done
+
       - name: Gerar relatório Mochawesome
         run: |
+          mkdir -p cypress/reports
+          JSON_FILES=(cypress/reports/*.json)
           if compgen -G "cypress/reports/*.json" > /dev/null; then
+            echo "Arquivos JSON encontrados. Gerando relatório consolidado..."
             npx mochawesome-merge cypress/reports/*.json > cypress/reports/report.json
-            npx marge cypress/reports/report.json -f final-report -o cypress/reports
+            if [ -s cypress/reports/report.json ]; then
+              npx marge cypress/reports/report.json -f final-report -o cypress/reports
+              echo "Relatório gerado com sucesso!"
+            else
+              echo "report.json vazio ou inválido. Pulando geração do HTML."
+            fi
           else
             echo "Nenhum arquivo JSON encontrado. Pulando merge do Mochawesome."
           fi
 
-      # Upload dos artefatos (screenshots, vídeos e relatórios)
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
@@ -43,4 +52,4 @@ jobs:
           path: |
             cypress/reports
             cypress/screenshots
-            cypress/videos
+            cypress/videos/organized
